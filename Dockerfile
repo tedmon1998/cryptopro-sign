@@ -60,14 +60,14 @@ FROM node:14-buster-slim as nodejs-env
 # Копируем настроенный КриптоПро в текущий слой
 COPY --from=configured-cryptopro / / 
 
-# Устанавливаем Node.js зависимости и собираем приложение
-COPY package*.json tsconfig*.json versions.json nest-cli.json ./
-COPY src ./src
+# Копирование собранных файлов приложения
+COPY dist ./dist
 
-RUN npm ci -q && \
-    npm run build && \
-    npm prune --production
+# Копирование package.json и package-lock.json (или только package.json, если lock-файл отсутствует)
+COPY package*.json ./
 
+# Установка зависимостей только для production. Это уменьшит размер образа, так как devDependencies не будут установлены.
+RUN npm ci --only=production
 # Открываем порт и задаем команду запуска
 EXPOSE 3037
 CMD ["npm", "start"]
