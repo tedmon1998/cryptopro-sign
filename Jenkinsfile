@@ -12,7 +12,12 @@ pipeline {
         stage('Docker building') {
             steps {
                 script {
-                    sh 'cd /home/edro/cryptopro && npm run build && sudo docker-compose down && sudo docker-compose up -d'
+                    sh '''cd /home/edro/cryptopro
+                    sudo npm install --legacy-peer-deps
+                    sudo rm -rf build
+                    sudo npm run build
+                    sudo docker-compose down
+                    sudo docker-compose up -d'''
                 }
             }
         }
