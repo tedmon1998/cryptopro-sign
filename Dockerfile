@@ -1,24 +1,28 @@
 # Базовый образ с КриптоПро
+# FROM debian:stretch-slim as cryptopro-generic
+# FROM node:stretch-slim as cryptopro-generic
 FROM debian:buster-slim as cryptopro-generic
 
-# Устанавливаем timezone и основные переменные окружения
+
+# Устанавливаем timezone
 ENV TZ="Europe/Moscow" \
-    docker="1" \
-    LICENSE="" \
-    ESIA_ENVIRONMENT='test' \
-    CERTIFICATE_PIN='testcer'
+    docker="1"
 
-# Устанавливаем переменные окружения для файлов ЕСИА
-ENV ESIA_CORE_CERT_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.cer" \
-    ESIA_PUB_KEY_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.pub"
+ARG LICENSE
+ENV LICENSE ${LICENSE}
 
-# Настройка временной зоны
+# prod или test
+ARG ESIA_ENVIRONMENT='test'
+ENV ESIA_CORE_CERT_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.cer"
+ENV ESIA_PUB_KEY_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.pub"
+
+ARG CERTIFICATE_PIN='testcer'
+ENV CERTIFICATE_PIN ${CERTIFICATE_PIN}
+
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone
 
-# Добавляем файлы для установки КриптоПро
 ADD cryptopro/install /tmp/src
-
 # Устанавливаем зависимости и CryptoPro
 RUN apt-get update && \
     apt-get install -y --no-install-recommends lsb-base expect libboost-dev unzip g++ curl && \
@@ -37,15 +41,15 @@ RUN apt-get update && \
     ln -s /opt/cprocsp/sbin/amd64/cpconfig && \
     rm -rf /tmp/src
 
-# Добавляем скрипты, сертификаты и файлы ЕСИА
+RUN apt-get update && apt-get install -y --no-install-recommends expect libboost-dev unzip g++ curl
+
 ADD cryptopro/scripts /cryptopro/scripts
 ADD cryptopro/certificates /cryptopro/certificates
-ADD cryptopro/esia /cryptopro/esia
+ADD cryptopro/esia cryptopro/esia
 
-# Настраиваем КриптоПро в новом слое
 FROM cryptopro-generic as configured-cryptopro
 
-# Устанавливаем лицензию, если она указана
+# устанавливаем лицензию, если она указана
 RUN ./cryptopro/scripts/setup_license ${LICENSE}
 
 # Устанавливаем корневой сертификат есиа
@@ -54,20 +58,18 @@ RUN ./cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
 # Устанавливаем сертификат пользователя
 RUN ./cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
 
-# Настраиваем окружение Node.js и приложение
-FROM node:14-buster-slim as nodejs-env
+FROM configured-cryptopro
+COPY package.json .
+COPY package-lock.json .
+COPY tsconfig.json .
+COPY tsconfig.build.json .
+COPY versions.json .
+COPY nest-cli.json .
+COPY src .
+RUN npm ci -q
+RUN npm run build
+RUN npm prune --production
 
-# Копируем настроенный КриптоПро в текущий слой
-COPY --from=configured-cryptopro / / 
-
-# Копирование собранных файлов приложения
-COPY dist ./dist
-
-# Копирование package.json и package-lock.json (или только package.json, если lock-файл отсутствует)
-COPY package*.json ./
-
-# Установка зависимостей только для production. Это уменьшит размер образа, так как devDependencies не будут установлены.
-RUN npm ci --only=production
-# Открываем порт и задаем команду запуска
 EXPOSE 3037
-CMD ["npm", "start"]
+#CMD ["sleep", "100000000000"]
+CMD npm start
