@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  cryptopro:
+    build:
+      container_name: cryptopro
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CERTIFICATE_PIN: 'testcer'
+        LICENSE: ''
+    ports:
+      - "3037:3037"
+    restart: unless-stopped
