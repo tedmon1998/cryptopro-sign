@@ -1,7 +1,7 @@
 # Базовый образ с КриптоПро
-FROM debian:stretch-slim as cryptopro-generic
+# FROM debian:stretch-slim as cryptopro-generic
 # FROM node:stretch-slim as cryptopro-generic
-# FROM debian:buster-slim as cryptopro-generic
+FROM debian:buster-slim as cryptopro-generic
 
 
 # Устанавливаем timezone
