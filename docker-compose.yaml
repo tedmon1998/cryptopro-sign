@@ -7,8 +7,8 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        CERTIFICATE_PIN: 'testcer'
-        LICENSE: ''
+        CERTIFICATE_PIN: testcer
+        # LICENSE:
     ports:
       - "3037:3037"
     restart: unless-stopped
