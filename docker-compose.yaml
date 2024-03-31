@@ -1,9 +1,9 @@
 version: '3.7'
 
 services:
+  container_name: cryptopro
   cryptopro:
     build:
-      container_name: cryptopro
       context: .
       dockerfile: Dockerfile
       args:
