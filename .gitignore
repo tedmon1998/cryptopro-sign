@@ -3,5 +3,4 @@
 dist/
 distTs/
 cryptopro/certificates/certificate_bundle.zip
-
 # .env
