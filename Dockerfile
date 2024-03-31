@@ -16,7 +16,7 @@ ARG ESIA_ENVIRONMENT='test'
 ENV ESIA_CORE_CERT_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.cer"
 ENV ESIA_PUB_KEY_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.pub"
 
-ARG CERTIFICATE_PIN
+ARG CERTIFICATE_PIN='testcer'
 ENV CERTIFICATE_PIN ${CERTIFICATE_PIN}
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
