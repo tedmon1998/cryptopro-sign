@@ -2,11 +2,7 @@
   "name": "cryptopro-sign",
   "version": "1.0.0",
   "description": "",
-<<<<<<< HEAD
-  "author": "WE Voting team",
-=======
   "author": "EDRO",
->>>>>>> dfdf37e (31.03.2024)
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -85,8 +81,4 @@
       "html"
     ]
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> dfdf37e (31.03.2024)
