@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "build:check": "npx tsc --noEmit",
-    "start": "node dist/src/main.js",
+    "start": "node ./src/main.js",
     "dev": "nest start --watch",
     "lint": "npx eslint src/** test/** --ext .ts,.tsx",
     "test": "jest --verbose",
