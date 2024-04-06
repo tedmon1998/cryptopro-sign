@@ -73,4 +73,4 @@ COPY ./dist .
 
 EXPOSE 3037
 #CMD ["sleep", "100000000000"]
-# CMD npm start
+CMD npm start
