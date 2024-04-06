@@ -59,16 +59,17 @@ RUN ./cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
 RUN ./cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
 
 FROM configured-cryptopro
-COPY package.json .
-COPY package-lock.json .
-COPY tsconfig.json .
-COPY tsconfig.build.json .
-COPY versions.json .
-COPY nest-cli.json .
-COPY src .
-RUN sudo npm ci -q
-RUN sudo npm run build
-RUN sudo npm prune --production
+COPY ./dist .
+# COPY package.json .
+# COPY package-lock.json .
+# COPY tsconfig.json .
+# COPY tsconfig.build.json .
+# COPY versions.json .
+# COPY nest-cli.json .
+# COPY src .
+# RUN npm ci -q
+# RUN npm run build
+# RUN npm prune --production
 
 EXPOSE 3037
 #CMD ["sleep", "100000000000"]
