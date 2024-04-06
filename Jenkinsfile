@@ -15,11 +15,12 @@ pipeline {
                     sh '''cd /home/edro/cryptopro
                     sudo npm install --legacy-peer-deps
                     sudo docker-compose down
-                    sudo rm -rf build
-                    sudo npm run build
                     sudo docker-compose up -d'''
                 }
             }
         }
     }
 }
+
+// sudo rm -rf build
+// sudo npm run build
