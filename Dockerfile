@@ -58,19 +58,20 @@ RUN ./cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
 # Устанавливаем сертификат пользователя
 RUN ./cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
 
-FROM configured-cryptopro
-COPY ./dist .
-# COPY package.json .
-# COPY package-lock.json .
-# COPY tsconfig.json .
-# COPY tsconfig.build.json .
-# COPY versions.json .
-# COPY nest-cli.json .
-# COPY src .
-# RUN npm ci -q
-# RUN npm run build
-# RUN npm prune --production
+# Настраиваем окружение Node.js и приложение
+FROM node:14-buster-slim as nodejs-env
 
+# Копируем настроенный КриптоПро в текущий слой
+COPY --from=configured-cryptopro / / 
+
+# Устанавливаем Node.js зависимости и собираем приложение
+COPY package*.json tsconfig*.json versions.json nest-cli.json ./
+COPY src ./src
+
+RUN npm ci -q && \
+    npm run build && \
+    npm prune --production
+
+# Открываем порт и задаем команду запуска
 EXPOSE 3037
-#CMD ["sleep", "100000000000"]
-CMD npm start
+CMD ["npm", "start"]
