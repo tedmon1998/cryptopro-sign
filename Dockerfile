@@ -59,7 +59,7 @@ RUN ./cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
 RUN ./cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
 
 # Устанавливаем сертификат в ключевой контейнер и хранилище my
-# RUN certmgr -inst -file /cryptopro/certificates/cert.cert -cont 'test8' -inst_to_cont
+RUN certmgr -inst -file /cryptopro/certificates/esia_${ESIA_ENVIRONMENT}.cer -cont 'test8' -inst_to_cont
 
 # Настраиваем окружение Node.js и приложение
 FROM node:14-buster-slim as nodejs-env
