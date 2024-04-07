@@ -1,1 +1,6 @@
-{}
+{
+  "BUILD_ID": "local",
+  "GIT_COMMIT": "development",
+  "DOCKER_TAG": "latest",
+  "VERSION": "1.0.0"
+}

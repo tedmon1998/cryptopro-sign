@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "prebuild": "rimraf dist",
+    "prebuild": "node scripts/generateVersion.js && rimraf dist",
     "build": "nest build",
     "build:check": "npx tsc --noEmit",
     "start": "node ./src/main.js",

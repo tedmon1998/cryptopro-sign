@@ -65,13 +65,14 @@ FROM node:14-buster-slim as nodejs-env
 COPY --from=configured-cryptopro / / 
 
 # Устанавливаем Node.js зависимости и собираем приложение
-COPY package*.json tsconfig*.json versions.json nest-cli.json ./
-COPY src ./src
+# COPY package*.json tsconfig*.json versions.json nest-cli.json ./
+COPY ./dist ./app
 
-RUN npm ci -q && \
-    npm run build && \
-    npm prune --production
+# RUN npm ci -q && \
+#     npm run build && \
+#     npm prune --production
 
 # Открываем порт и задаем команду запуска
 EXPOSE 3037
-CMD ["npm", "start"]
+# CMD ["npm", "start"]
+CMD ["tail", "-f", "/dev/null"]

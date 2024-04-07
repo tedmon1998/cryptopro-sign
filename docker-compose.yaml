@@ -12,3 +12,5 @@ services:
     ports:
       - "3037:3037"
     restart: unless-stopped
+    environment:
+      - CERTIFICATE_PIN=testcer
