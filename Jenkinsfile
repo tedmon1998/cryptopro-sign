@@ -17,7 +17,6 @@ pipeline {
                     sudo npm run prebuild
                     sudo npm run build
                     sudo cp ./versions.json ./dist
-                    sudo cp ./.env ./dist
                     sudo docker-compose down
                     sudo docker-compose up -d'''
                 }
@@ -28,3 +27,4 @@ pipeline {
 
 // sudo rm -rf build
 // sudo npm run build
+// sudo cp ./.env ./dist
