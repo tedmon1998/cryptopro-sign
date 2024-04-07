@@ -16,8 +16,8 @@ pipeline {
                     sudo npm install --legacy-peer-deps
                     sudo npm run prebuild
                     sudo npm run build
-                    cp ./versions.json ./dist
-                    cp ./.env ./dist
+                    sudo cp ./versions.json ./dist
+                    sudo cp ./.env ./dist
                     sudo docker-compose down
                     sudo docker-compose up -d'''
                 }
