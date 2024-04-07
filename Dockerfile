@@ -41,7 +41,7 @@ RUN apt-get update && \
     ln -s /opt/cprocsp/sbin/amd64/cpconfig && \
     rm -rf /tmp/src
 
-RUN apt-get update && apt-get install -y --no-install-recommends expect libboost-dev unzip g++ curl
+# RUN apt-get update && apt-get install -y --no-install-recommends expect libboost-dev unzip g++ curl
 
 ADD cryptopro/scripts /cryptopro/scripts
 ADD cryptopro/certificates /cryptopro/certificates
@@ -67,12 +67,15 @@ COPY --from=configured-cryptopro / /
 # Устанавливаем Node.js зависимости и собираем приложение
 # COPY package*.json tsconfig*.json versions.json nest-cli.json ./
 COPY ./dist ./app
+WORKDIR /app
+
+# Открываем порт и задаем команду запуска
+EXPOSE 3037
+RUN npm install
+CMD ["npm", "start"]
+# CMD ["tail", "-f", "/dev/null"]
+
 
 # RUN npm ci -q && \
 #     npm run build && \
 #     npm prune --production
-
-# Открываем порт и задаем команду запуска
-EXPOSE 3037
-# CMD ["npm", "start"]
-CMD ["tail", "-f", "/dev/null"]
