@@ -8,7 +8,7 @@ FROM debian:buster-slim as cryptopro-generic
 ENV TZ="Europe/Moscow" \
     docker="1"
 
-ARG LICENSE
+ARG LICENSE='40400-00000-UKAC2-00QP8-MT29G'
 ENV LICENSE ${LICENSE}
 
 # prod или test
@@ -22,8 +22,12 @@ ENV CERTIFICATE_PIN ${CERTIFICATE_PIN}
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone
 
+WORKDIR /app
+
 ADD cryptopro/install /tmp/src
 # Устанавливаем зависимости и CryptoPro
+ADD ./cryptopro /cryptopro
+
 RUN apt-get update && \
     apt-get install -y --no-install-recommends lsb-base expect libboost-dev unzip g++ curl && \
     cd /tmp/src && \
@@ -39,24 +43,27 @@ RUN apt-get update && \
     ln -s /opt/cprocsp/bin/amd64/inittst && \
     ln -s /opt/cprocsp/bin/amd64/wipefile && \
     ln -s /opt/cprocsp/sbin/amd64/cpconfig && \
+    dos2unix && \
+    dos2unix /cryptopro/scripts/setup_root && \
     rm -rf /tmp/src
+
+# dos2unix /cryptopro/scripts/setup_license && \
 
 # RUN apt-get update && apt-get install -y --no-install-recommends expect libboost-dev unzip g++ curl
 
-ADD cryptopro/scripts /cryptopro/scripts
-ADD cryptopro/certificates /cryptopro/certificates
-ADD cryptopro/esia cryptopro/esia
+# ADD ./cryptopro/certificates /cryptopro/certificates
+# ADD ./cryptopro/esia cryptopro/esia
 
 FROM cryptopro-generic as configured-cryptopro
 
 # устанавливаем лицензию, если она указана
-RUN ./cryptopro/scripts/setup_license ${LICENSE}
+RUN /cryptopro/scripts/setup_license ${LICENSE}
 
 # Устанавливаем корневой сертификат есиа
-RUN ./cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
+# RUN /cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
 
 # Устанавливаем сертификат пользователя
-RUN ./cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
+# RUN /cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
 
 # Настраиваем окружение Node.js и приложение
 FROM node:14-buster-slim as nodejs-env
@@ -68,7 +75,6 @@ COPY --from=configured-cryptopro / /
 # COPY package*.json tsconfig*.json versions.json nest-cli.json ./
 COPY ./dist ./app
 WORKDIR /app
-
 # Открываем порт и задаем команду запуска
 EXPOSE 3037
 RUN npm install

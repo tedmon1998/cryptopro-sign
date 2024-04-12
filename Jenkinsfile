@@ -24,7 +24,7 @@ pipeline {
         }
     }
 }
-
+// npm run prebuild && npm run build && docker-compose down && docker-compose up
 // sudo rm -rf build
 // sudo npm run build
 // sudo cp ./.env ./dist
