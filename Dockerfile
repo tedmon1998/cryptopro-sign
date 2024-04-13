@@ -29,6 +29,9 @@ ADD cryptopro/install /tmp/src
 ADD ./cryptopro /cryptopro
 
 RUN apt-get update && \
+    apt-get install -y dos2unix && \
+    dos2unix /cryptopro/scripts/setup_root && \
+    dos2unix /cryptopro/scripts/setup_license && \
     apt-get install -y --no-install-recommends lsb-base expect libboost-dev unzip g++ curl && \
     cd /tmp/src && \
     tar -xf linux-amd64_deb.tgz && \
@@ -43,13 +46,7 @@ RUN apt-get update && \
     ln -s /opt/cprocsp/bin/amd64/inittst && \
     ln -s /opt/cprocsp/bin/amd64/wipefile && \
     ln -s /opt/cprocsp/sbin/amd64/cpconfig && \
-    dos2unix && \
-    dos2unix /cryptopro/scripts/setup_root && \
     rm -rf /tmp/src
-
-# dos2unix /cryptopro/scripts/setup_license && \
-
-# RUN apt-get update && apt-get install -y --no-install-recommends expect libboost-dev unzip g++ curl
 
 # ADD ./cryptopro/certificates /cryptopro/certificates
 # ADD ./cryptopro/esia cryptopro/esia
@@ -60,7 +57,7 @@ FROM cryptopro-generic as configured-cryptopro
 RUN /cryptopro/scripts/setup_license ${LICENSE}
 
 # Устанавливаем корневой сертификат есиа
-# RUN /cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
+RUN /cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
 
 # Устанавливаем сертификат пользователя
 # RUN /cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
@@ -78,8 +75,8 @@ WORKDIR /app
 # Открываем порт и задаем команду запуска
 EXPOSE 3037
 RUN npm install
-CMD ["npm", "start"]
-# CMD ["tail", "-f", "/dev/null"]
+# CMD ["npm", "start"]
+CMD ["tail", "-f", "/dev/null"]
 
 
 # RUN npm ci -q && \
