@@ -40,6 +40,8 @@ export const cryptoProSign = async (str: string): Promise<string> => {
     await writeFile(tempFile, str)
     const dirName = dirname(tempFile)
     // eslint-disable-next-line max-len
+    console.log('CERTIFICATE_PIN :', process.env.CERTIFICATE_PIN);
+    console.log('CERTIFICATE_PIN :', CERTIFICATE_PIN);
     const cmd = `cryptcp -signf -dir "${dirName}" -thumbprint "${containerHash}" -norev -nochain "${tempFile}" -cert -der -strict -hashAlg "1.2.643.7.1.1.2.2" -detached -pin "${CERTIFICATE_PIN}"`
     await execute(cmd)
     const result = await readFile(signedFile)

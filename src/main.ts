@@ -7,7 +7,9 @@ import { BUILD_INFO, isValidEnv, PORT, SWAGGER_BASE_PATH } from './config'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { HttpExceptionFilter } from './middleware/http.exception.filter'
 import { ResultInterceptor } from './middleware/result.interceptor'
+import * as dotenv from 'dotenv'
 import { log, logError } from './utils/logUtils'
+dotenv.config()
 
 async function bootstrap() {
   log(`Build info: ${JSON.stringify(BUILD_INFO, null, 2)}`, 'Main')

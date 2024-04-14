@@ -16,6 +16,7 @@ ARG ESIA_ENVIRONMENT='test'
 ENV ESIA_CORE_CERT_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.cer"
 ENV ESIA_PUB_KEY_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.pub"
 
+
 ARG CERTIFICATE_PIN='testcer'
 ENV CERTIFICATE_PIN ${CERTIFICATE_PIN}
 
@@ -30,8 +31,11 @@ ADD ./cryptopro /cryptopro
 
 RUN apt-get update && \
     apt-get install -y dos2unix && \
+    apt-get install -y zip && \
     dos2unix /cryptopro/scripts/setup_root && \
     dos2unix /cryptopro/scripts/setup_license && \
+    dos2unix /cryptopro/scripts/setup_my_certificate && \
+    dos2unix /cryptopro/scripts/lib/functions.sh && \
     apt-get install -y --no-install-recommends lsb-base expect libboost-dev unzip g++ curl && \
     cd /tmp/src && \
     tar -xf linux-amd64_deb.tgz && \
@@ -45,11 +49,8 @@ RUN apt-get update && \
     ln -s /opt/cprocsp/bin/amd64/der2xer && \
     ln -s /opt/cprocsp/bin/amd64/inittst && \
     ln -s /opt/cprocsp/bin/amd64/wipefile && \
-    ln -s /opt/cprocsp/sbin/amd64/cpconfig && \
-    rm -rf /tmp/src
-
-# ADD ./cryptopro/certificates /cryptopro/certificates
-# ADD ./cryptopro/esia cryptopro/esia
+    ln -s /opt/cprocsp/sbin/amd64/cpconfig
+# rm -rf /tmp/src
 
 FROM cryptopro-generic as configured-cryptopro
 
@@ -69,7 +70,6 @@ FROM node:14-buster-slim as nodejs-env
 COPY --from=configured-cryptopro / / 
 
 # Устанавливаем Node.js зависимости и собираем приложение
-# COPY package*.json tsconfig*.json versions.json nest-cli.json ./
 COPY ./dist ./app
 WORKDIR /app
 # Открываем порт и задаем команду запуска
@@ -77,8 +77,3 @@ EXPOSE 3037
 RUN npm install
 # CMD ["npm", "start"]
 CMD ["tail", "-f", "/dev/null"]
-
-
-# RUN npm ci -q && \
-#     npm run build && \
-#     npm prune --production

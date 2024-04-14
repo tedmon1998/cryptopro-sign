@@ -4,15 +4,21 @@
 # Установка сертификатов пользователя для проверки и подписания
 #
 
-cd "$(dirname "$0")"
-source lib/colors.sh
-source lib/functions.sh
 
+
+source /cryptopro/scripts/lib/colors.sh
+source /cryptopro/scripts/lib/functions.sh
 dir=`mktemp -d`
 cd "$dir"
 #cat - > "bundle.zip"
 echo "bundle file $1"
 unzip -q "$1"
+if [ $? -ne 0 ]; then
+    echo "Ошибка распаковки архива"
+    exit 1
+fi
+
+certificateFileName="esia_test.cer"
 #rm bundle.zip
 
 # info "Temp dir: $dir"
@@ -38,9 +44,11 @@ function testprivk {
 # }
 
 # xargs удаляет `./` из названия файла
-certFileName=`find -maxdepth 1 -type f \! -name . | head -n1 | xargs -I{} basename {}`
+# certFileName=`find -maxdepth 1 -type f \! -name . | head -n1 | xargs -I{} basename {}`
 contShortName=`find -maxdepth 1 -type d \! -name . | head -n1 | xargs -I{} basename {}`
 contFullName=`tail -c+5 "$contShortName/name.key"`
+echo "contShortName $contShortName"
+echo "contFullName $contFullName"
 
 # Есть контейнер, устанавливаем
 if [ -n "$contShortName" ]; then
@@ -52,12 +60,13 @@ if [ -n "$contShortName" ]; then
   fi
 fi
 
+
 # Есть сертификат
-if [ -n "$certFileName" ]; then
+if [ -n "$certificateFileName" ]; then
 
 	if [ ! -n "$contShortName" ]; then
 		# устанавливается только сертификат
-		certmgr -inst -file "$certFileName"
+		certmgr -inst -file "$certificateFileName"
 
 		if [ "$?" -eq "1" ]; then
 			ok "Certificate installed"
@@ -73,10 +82,13 @@ if [ -n "$certFileName" ]; then
 		if [ -z "$2" ]; then
 		  info "no PIN found"
 			# нет PIN
+			certmgr -inst -file "/cryptopro/esia/$certificateFileName" -pin "$2" -cont '\\.\HDIMAGE\'"$contFullName"
+
 			certmgr -inst -file "$certFileName" -cont '\\.\HDIMAGE\'"$contFullName"
 	  else
 	    info "use PIN to setup certificate"
 			# есть PIN
+			echo "PIN $2"
 			certmgr -inst -file "$certFileName" -pin "$2" -cont '\\.\HDIMAGE\'"$contFullName"
 	  fi
 
