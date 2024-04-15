@@ -6,11 +6,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        CERTIFICATE_PIN: testcer
-        LICENSE: 40400-00000-UKAC2-00QP8-MT29G
     ports:
       - "3037:3037"
     restart: unless-stopped
     environment:
-      - CERTIFICATE_PIN=testcer
+      - CERTIFICATE_PIN=1234567890

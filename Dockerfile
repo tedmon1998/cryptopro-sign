@@ -75,5 +75,5 @@ WORKDIR /app
 # Открываем порт и задаем команду запуска
 EXPOSE 3037
 RUN npm install
-# CMD ["npm", "start"]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["npm", "start"]
+# CMD ["tail", "-f", "/dev/null"]
