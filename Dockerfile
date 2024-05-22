@@ -17,7 +17,7 @@ ENV ESIA_CORE_CERT_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.cer"
 ENV ESIA_PUB_KEY_FILE "/cryptopro/esia/esia_${ESIA_ENVIRONMENT}.pub"
 
 
-ARG CERTIFICATE_PIN='testcer'
+ARG CERTIFICATE_PIN='1234567890'
 ENV CERTIFICATE_PIN ${CERTIFICATE_PIN}
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
@@ -75,5 +75,5 @@ WORKDIR /app
 # Открываем порт и задаем команду запуска
 EXPOSE 3037
 RUN npm install
-CMD ["npm", "start"]
-# CMD ["tail", "-f", "/dev/null"]
+# CMD ["npm", "start"]
+CMD ["tail", "-f", "/dev/null"]
