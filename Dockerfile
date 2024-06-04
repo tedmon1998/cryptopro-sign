@@ -62,6 +62,11 @@ RUN /cryptopro/scripts/setup_root ${ESIA_CORE_CERT_FILE}
 
 # Устанавливаем сертификат пользователя
 # RUN /cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip ${CERTIFICATE_PIN}
+RUN expect -c ' \
+    spawn /cryptopro/scripts/setup_my_certificate /cryptopro/certificates/certificate_bundle.zip; \
+    expect "password:"; \
+    send -- "$env(CERTIFICATE_PIN)\r"; \
+    expect eof'
 
 # Настраиваем окружение Node.js и приложение
 FROM node:14-buster-slim as nodejs-env
@@ -75,5 +80,5 @@ WORKDIR /app
 # Открываем порт и задаем команду запуска
 EXPOSE 3037
 RUN npm install
-# CMD ["npm", "start"]
-CMD ["tail", "-f", "/dev/null"]
+CMD ["npm", "start"]
+# CMD ["tail", "-f", "/dev/null"]
